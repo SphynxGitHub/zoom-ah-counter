@@ -11,7 +11,7 @@ let counts = {};
 words.forEach(w => counts[w] = 0);
 
 // Load sound
-const clickSound = new Audio("sounds/click.mp3");
+const clickSound = new Audio("sounds/pop.mp3");
 clickSound.preload = "auto";
 
 // Build UI
