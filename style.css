@@ -49,7 +49,7 @@ h1 { margin-bottom: 30px; }
   cursor: pointer;
 }
 .filler-btn:hover { background: #eef; }
-.sub { margin-left: 1em; font-size: 0.9em; color: #555; }
+.sub { margin-left: 1em; font-size: 0.9em; color: blue; }
 
 
 button {
