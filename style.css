@@ -63,3 +63,9 @@ button:hover {
   color: #666;
   font-size: 14px;
 }
+.loading {
+  font-size: 18px;
+  color: #666;
+  margin: 20px;
+}
+
