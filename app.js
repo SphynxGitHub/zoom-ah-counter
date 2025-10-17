@@ -1,7 +1,7 @@
 const fillers = ["Ah", "Um", "You know", "So", "Like", "Other"];
 let counts = {}; // { name: { total: n, details: {Ah: n, Um: n, ...}} }
-let clickSound = new Audio("sounds/click.mp3");
-clickSound.preload = "auto";
+let popSound = new Audio("sounds/pop.wav");
+popSound.preload = "auto";
 
 function buildParticipantGrid() {
   const container = document.getElementById("participantContainer");
