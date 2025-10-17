@@ -3,19 +3,19 @@ let clickSound;
 let participantRefreshInterval;
 let debugBox;
 
-// === Utility for on-screen logs ===
+// === Utility: on-screen log box ===
 function log(msg) {
   if (!debugBox) {
     debugBox = document.createElement("div");
     debugBox.style.position = "fixed";
     debugBox.style.bottom = "8px";
     debugBox.style.right = "8px";
-    debugBox.style.background = "rgba(0,0,0,0.6)";
+    debugBox.style.background = "rgba(0,0,0,0.7)";
     debugBox.style.color = "#fff";
     debugBox.style.fontSize = "12px";
     debugBox.style.padding = "6px 10px";
     debugBox.style.borderRadius = "8px";
-    debugBox.style.maxWidth = "300px";
+    debugBox.style.maxWidth = "320px";
     debugBox.style.zIndex = "9999";
     document.body.appendChild(debugBox);
   }
@@ -25,60 +25,61 @@ function log(msg) {
   console.log(msg);
 }
 
+// === Check for SDK injection ===
 if (typeof ZoomAppsSdk === "undefined") {
-  document.body.innerHTML = `<div style="padding:20px; color: red; font-size:18px;">
-    ⚠️ ZoomAppsSdk is undefined. This page is not running inside a Zoom Apps-injected context.
-  </div>`;
+  document.body.innerHTML = `
+    <div style="padding:20px; color:red; font-size:18px;">
+      ⚠️ ZoomAppsSdk is undefined.<br>
+      This page is not running inside a Zoom Apps-injected context.
+    </div>`;
   throw new Error("ZoomAppsSdk not injected");
 }
 
 // === Initialize Zoom App SDK ===
-log("Initializing ZoomAppsSdk...");
+log("🔊 Initializing ZoomAppsSdk...");
 
 ZoomAppsSdk.initialize()
   .then(async () => {
-    log("✅ ZoomAppsSdk initialized successfully");
+    log("✅ ZoomAppsSdk initialized successfully!");
 
-    // Prepare click sound
     clickSound = new Audio("sounds/click.mp3");
     clickSound.preload = "auto";
 
-    // Try to get context
-    // Fetch both user + meeting context
+    // === Fetch user + meeting context ===
     const userContext = await ZoomAppsSdk.getUserContext();
     const meetingContext = await ZoomAppsSdk.getMeetingContext();
-    
+
     log("👤 UserContext: " + JSON.stringify(userContext));
     log("📋 MeetingContext: " + JSON.stringify(meetingContext));
-    
+
+    // === Validate meeting status ===
     if (!meetingContext || meetingContext.meetingStatus !== "inMeeting") {
       log("⚠️ Not detected as in-meeting. Showing manual mode.");
       showManualMode();
       return;
     }
 
-    // Initial participant fetch
+    // === Initial participant load ===
     await refreshParticipants();
 
-    // Auto-refresh every 10 seconds
+    // === Auto-refresh participants every 10 seconds ===
     participantRefreshInterval = setInterval(refreshParticipants, 10000);
   })
-  .catch(err => {
-    log("❌ ZoomAppsSdk initialization failed: " + err);
-  });
+  .catch(err => log("❌ ZoomAppsSdk initialization failed: " + err));
 
-// === Fetch and build participants ===
+// === Refresh participants ===
 async function refreshParticipants() {
   try {
     log("🔄 Fetching participants...");
     const participants = await ZoomAppsSdk.getMeetingParticipants();
+
     if (participants && participants.length > 0) {
       log(`✅ Got ${participants.length} participant(s).`);
       buildParticipantGrid(participants);
     } else {
-      log("⚠️ No participants returned, showing fallback.");
-      const context = await ZoomAppsSdk.getContext();
-      const name = context.user?.displayName || "You";
+      log("⚠️ No participants returned — fallback to user context.");
+      const userContext = await ZoomAppsSdk.getUserContext();
+      const name = userContext.displayName || "You";
       buildParticipantGrid([{ displayName: name }]);
     }
   } catch (err) {
@@ -109,8 +110,7 @@ function buildParticipantGrid(participants) {
 
 function showManualMode() {
   const container = document.getElementById("participantContainer");
-  container.innerHTML =
-    "<div>No participants detected. Add manually below.</div>";
+  container.innerHTML = "<div>No participants detected. Add manually below.</div>";
 }
 
 // === Button Handlers ===
