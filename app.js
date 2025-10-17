@@ -44,10 +44,14 @@ ZoomAppsSdk.initialize()
     clickSound.preload = "auto";
 
     // Try to get context
-    const context = await ZoomAppsSdk.getContext();
-    log("📋 Context: " + JSON.stringify(context));
-
-    if (context.runningContext !== "inMeeting") {
+    // Fetch both user + meeting context
+    const userContext = await ZoomAppsSdk.getUserContext();
+    const meetingContext = await ZoomAppsSdk.getMeetingContext();
+    
+    log("👤 UserContext: " + JSON.stringify(userContext));
+    log("📋 MeetingContext: " + JSON.stringify(meetingContext));
+    
+    if (!meetingContext || meetingContext.meetingStatus !== "inMeeting") {
       log("⚠️ Not detected as in-meeting. Showing manual mode.");
       showManualMode();
       return;
