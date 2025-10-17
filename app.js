@@ -1,14 +1,29 @@
 let counts = {};
 let clickSound;
 
-// Initialize Zoom SDK
+console.log("App started: initializing ZoomAppsSdk...");
+
+// Initialize only once
 ZoomAppsSdk.initialize()
   .then(async () => {
-    console.log("✅ Zoom SDK initialized");
+    console.log("✅ ZoomAppsSdk initialized successfully!");
 
+    // Preload sound
     clickSound = new Audio("sounds/click.mp3");
     clickSound.preload = "auto";
 
+    // Check current context
+    const context = await ZoomAppsSdk.getContext();
+    console.log("📋 Current context:", context);
+
+    // Ensure we're actually in a meeting
+    if (context.runningContext !== "inMeeting") {
+      console.warn("⚠️ Not detected as in-meeting. Showing manual mode.");
+      showManualMode();
+      return;
+    }
+
+    // Try to fetch participants
     try {
       console.log("Fetching participants...");
       const participants = await ZoomAppsSdk.getMeetingParticipants();
@@ -17,15 +32,16 @@ ZoomAppsSdk.initialize()
       if (participants && participants.length > 0) {
         buildParticipantGrid(participants);
       } else {
-        console.warn("No participants returned — using manual mode");
-        showManualMode();
+        console.warn("No participants returned — using fallback to self.");
+        const name = context.user?.displayName || "You";
+        buildParticipantGrid([{ displayName: name }]);
       }
     } catch (err) {
-      console.error("Error getting participants:", err);
+      console.error("❌ Error getting participants:", err);
       showManualMode();
     }
   })
-  .catch(err => console.error("Zoom init failed:", err));
+  .catch(err => console.error("❌ ZoomAppsSdk initialization failed:", err));
 
 function buildParticipantGrid(participants) {
   const container = document.getElementById("participantContainer");
