@@ -107,3 +107,18 @@ button:hover { transform: scale(1.05); }
 
 #summaryList { font-size: 18px; margin-bottom: 20px; }
 .modal-buttons { text-align: center; }
+
+/* Color-coded filler buttons by type */
+.filler-btn[data-filler="Ah"]        { background: #fde68a; } /* yellow */
+.filler-btn[data-filler="Um"]        { background: #bbf7d0; } /* green */
+.filler-btn[data-filler="You know"]  { background: #a5f3fc; } /* cyan */
+.filler-btn[data-filler="So"]        { background: #fbcfe8; } /* pink */
+.filler-btn[data-filler="Like"]      { background: #c7d2fe; } /* lavender */
+.filler-btn[data-filler="Other"]     { background: #fca5a5; } /* red */
+
+.filler-btn:hover {
+  filter: brightness(0.95);
+  border-color: #2563eb;
+  color: #000;
+}
+
