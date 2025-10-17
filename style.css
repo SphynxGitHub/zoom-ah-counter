@@ -33,6 +33,25 @@ h1 { margin-bottom: 30px; }
 .word { font-size: 20px; font-weight: 600; }
 .count { font-size: 36px; font-weight: bold; margin-top: 8px; }
 
+.fillers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 6px;
+}
+.filler-btn {
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f9f9f9;
+  cursor: pointer;
+}
+.filler-btn:hover { background: #eef; }
+.sub { margin-left: 1em; font-size: 0.9em; color: #555; }
+
+
 button {
   background: #3b82f6;
   border: none;
