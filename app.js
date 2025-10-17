@@ -1,5 +1,3 @@
-// === Zoom Ah-Counter with Participants ===
-
 let counts = {};
 let clickSound;
 
@@ -11,7 +9,6 @@ ZoomAppsSdk.initialize()
     clickSound = new Audio("sounds/pop.mp3");
     clickSound.preload = "auto";
 
-    // Try to load participants
     try {
       const participants = await ZoomAppsSdk.getMeetingParticipants();
       if (participants && participants.length > 0) {
@@ -28,7 +25,7 @@ ZoomAppsSdk.initialize()
 
 function buildParticipantGrid(participants) {
   const container = document.getElementById("participantContainer");
-  container.innerHTML = ""; // clear "loading"
+  container.innerHTML = "";
 
   participants.forEach(p => {
     const name = p.displayName || "Unknown";
@@ -45,7 +42,6 @@ function buildParticipantGrid(participants) {
   });
 }
 
-// Fallback: If not in Zoom, allow manual entry
 function showManualMode() {
   const container = document.getElementById("participantContainer");
   container.innerHTML = "<div>No participants detected. Add manually below.</div>";
@@ -58,7 +54,7 @@ function handleClick(name) {
   document.getElementById(`count-${name}`).textContent = counts[name];
 }
 
-// Reset all counters
+// Reset all
 document.getElementById("resetAll").addEventListener("click", () => {
   Object.keys(counts).forEach(name => {
     counts[name] = 0;
@@ -67,12 +63,12 @@ document.getElementById("resetAll").addEventListener("click", () => {
   });
 });
 
-// Add custom entry
+// Add custom
 document.getElementById("addCustom").addEventListener("click", () => {
   const name = prompt("Enter name or label:");
-  if (!name || counts[name]) return; // skip duplicates or blank
-
+  if (!name || counts[name]) return;
   const container = document.getElementById("participantContainer");
+
   const div = document.createElement("div");
   div.className = "word-card";
   div.innerHTML = `
@@ -82,4 +78,35 @@ document.getElementById("addCustom").addEventListener("click", () => {
   div.addEventListener("click", () => handleClick(name));
   container.appendChild(div);
   counts[name] = 0;
+});
+
+// === Summary modal ===
+const modal = document.getElementById("summaryModal");
+const summaryList = document.getElementById("summaryList");
+const copyBtn = document.getElementById("copySummary");
+const closeBtn = document.getElementById("closeSummary");
+
+document.getElementById("showSummary").addEventListener("click", () => {
+  let total = "";
+  let html = "";
+
+  for (const [name, count] of Object.entries(counts)) {
+    html += `<div><strong>${name}</strong>: ${count}</div>`;
+    total += `${name}: ${count}\n`;
+  }
+
+  summaryList.innerHTML = html || "<em>No counts yet.</em>";
+  modal.classList.remove("hidden");
+
+  // Enable copy
+  copyBtn.onclick = () => {
+    navigator.clipboard.writeText(total.trim());
+    copyBtn.textContent = "Copied!";
+    setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+  };
+});
+
+// Close modal
+closeBtn.addEventListener("click", () => {
+  modal.classList.add("hidden");
 });
