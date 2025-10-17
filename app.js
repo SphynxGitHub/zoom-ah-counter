@@ -37,8 +37,8 @@ function buildParticipantGrid() {
 }
 
 function handleClick(name, filler) {
-  clickSound.currentTime = 0;
-  clickSound.play().catch(() => {});
+  popSound.currentTime = 0;
+  popSound.play().catch(() => {});
 
   let actualFiller = filler;
   if (filler === "Other") {
