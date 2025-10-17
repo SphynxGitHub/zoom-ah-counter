@@ -1,139 +1,70 @@
-body {
-  font-family: "Inter", system-ui, sans-serif;
-  background: #fafafa;
-  color: #111;
-  text-align: center;
-  padding: 40px;
-}
-
-h1 { margin-bottom: 30px; }
-
+/* make grid more compact */
 .grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* 3–6 per row depending on screen width */
+  gap: 8px;
+  justify-items: center;
 }
 
+/* slimmer cards */
 .word-card {
+  position: relative;
   background: #fff;
   border: 2px solid #3b82f6;
-  border-radius: 14px;
-  padding: 20px 28px;
-  min-width: 120px;
+  border-radius: 10px;
+  padding: 10px;
+  width: 130px;      /* narrower width */
   text-align: center;
   transition: transform 0.1s, background 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .word-card:hover {
   background: #e8f0ff;
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
-.word { font-size: 20px; font-weight: 600; }
-.count { font-size: 36px; font-weight: bold; margin-top: 8px; }
+.word {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
 
+.count {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 4px 0;
+}
+
+/* make filler buttons smaller */
 .fillers {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 3px;
   justify-content: center;
-  margin-top: 6px;
+  margin-top: 4px;
 }
+
 .filler-btn {
-  font-size: 13px;
-  font-weight: 600;
-  color: #222; /* darker text */
-  padding: 6px 10px;
-  border: 1px solid #999;
+  font-size: 11px;
+  padding: 3px 6px;
+  border: 1px solid #ccc;
   border-radius: 6px;
-  background: #f2f2f2; /* slightly darker background */
+  background: #f2f2f2;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
 }
 .filler-btn:hover {
-  background: #dbeafe; /* light blue hover */
-  border-color: #3b82f6;
-  color: #000;
+  background: #dbeafe;
 }
 
-.sub { margin-left: 1em; font-size: 0.9em; color: blue; }
-
-
-button {
-  background: #3b82f6;
-  border: none;
-  color: white;
-  padding: 12px 24px;
-  font-size: 18px;
-  border-radius: 10px;
-  margin: 10px;
-  cursor: pointer;
-  transition: transform 0.1s;
-}
-
-button:hover { transform: scale(1.05); }
-
-.footer { margin-top: 40px; color: #666; font-size: 14px; }
-.loading { font-size: 18px; color: #666; margin: 20px; }
-
-/* Modal styling */
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal.hidden { display: none; }
-
-.modal-content {
-  background: white;
-  border-radius: 14px;
-  padding: 30px;
-  max-width: 400px;
-  width: 80%;
-  text-align: left;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-.modal-content h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-#summaryList { font-size: 18px; margin-bottom: 20px; }
-.modal-buttons { text-align: center; }
-
-/* Color-coded filler buttons by type */
-.filler-btn[data-filler="Ah"]        { background: #fde68a; } /* yellow */
-.filler-btn[data-filler="Um"]        { background: #bbf7d0; } /* green */
-.filler-btn[data-filler="You know"]  { background: #a5f3fc; } /* cyan */
-.filler-btn[data-filler="So"]        { background: #fbcfe8; } /* pink */
-.filler-btn[data-filler="Like"]      { background: #c7d2fe; } /* lavender */
-.filler-btn[data-filler="Other"]     { background: #fca5a5; } /* red */
-
-.filler-btn:hover {
-  filter: brightness(0.95);
-  border-color: #2563eb;
-  color: #000;
-}
+/* remove button smaller & tucked in corner */
 .remove-btn {
   position: absolute;
-  top: 6px;
-  right: 10px;
-  font-weight: bold;
-  color: #555;
+  top: 3px;
+  right: 6px;
+  font-size: 14px;
+  color: #666;
   cursor: pointer;
-  font-size: 18px;
-  line-height: 1;
 }
-.remove-btn:hover {
-  color: #e11d48; /* red */
-}
-.word-card {
-  position: relative; /* ensures remove button positions correctly */
-}
+.remove-btn:hover { color: #e11d48; }
