@@ -7,25 +7,51 @@ body {
 }
 
 h1 {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
-.counter-display {
-  font-size: 80px;
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+
+.word-card {
+  background: #fff;
+  border: 2px solid #3b82f6;
+  border-radius: 14px;
+  padding: 20px 28px;
+  min-width: 120px;
+  text-align: center;
+  transition: transform 0.1s, background 0.2s;
+}
+
+.word-card:hover {
+  background: #e8f0ff;
+  transform: scale(1.05);
+}
+
+.word {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.count {
+  font-size: 40px;
   font-weight: bold;
-  margin: 20px 0;
+  margin-top: 8px;
 }
 
 button {
   background: #3b82f6;
   border: none;
   color: white;
-  padding: 14px 28px;
+  padding: 12px 24px;
   font-size: 18px;
   border-radius: 10px;
-  margin: 10px;
+  margin-top: 30px;
   cursor: pointer;
-  transition: transform 0.1s;
 }
 
 button:hover {
