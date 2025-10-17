@@ -121,4 +121,19 @@ button:hover { transform: scale(1.05); }
   border-color: #2563eb;
   color: #000;
 }
-
+.remove-btn {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+.remove-btn:hover {
+  color: #e11d48; /* red */
+}
+.word-card {
+  position: relative; /* ensures remove button positions correctly */
+}
