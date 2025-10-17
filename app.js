@@ -25,6 +25,13 @@ function log(msg) {
   console.log(msg);
 }
 
+if (typeof ZoomAppsSdk === "undefined") {
+  document.body.innerHTML = `<div style="padding:20px; color: red; font-size:18px;">
+    ⚠️ ZoomAppsSdk is undefined. This page is not running inside a Zoom Apps-injected context.
+  </div>`;
+  throw new Error("ZoomAppsSdk not injected");
+}
+
 // === Initialize Zoom App SDK ===
 log("Initializing ZoomAppsSdk...");
 
