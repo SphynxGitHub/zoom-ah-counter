@@ -10,13 +10,18 @@
 <body>
   <div class="wrap">
     <h1>Toastmasters Ah-Counter 🎙️</h1>
-    <div class="counter-display" id="counter">0</div>
-    <div class="buttons">
-      <button id="clickBtn">Click / Ah!</button>
-      <button id="undoBtn">Undo</button>
-      <button id="resetBtn">Reset</button>
+
+    <div class="grid" id="buttonsContainer">
+      <!-- buttons will be injected by JS -->
     </div>
-    <div class="footer">Make sure “Share Computer Audio” is ON 🔊</div>
+
+    <div class="controls">
+      <button id="resetAll">Reset All</button>
+    </div>
+
+    <div class="footer">
+      Make sure “Share Computer Audio” is ON 🔊
+    </div>
   </div>
 
   <script src="app.js"></script>
