@@ -6,18 +6,22 @@ ZoomAppsSdk.initialize()
   .then(async () => {
     console.log("✅ Zoom SDK initialized");
 
-    clickSound = new Audio("sounds/pop.mp3");
+    clickSound = new Audio("sounds/click.mp3");
     clickSound.preload = "auto";
 
     try {
+      console.log("Fetching participants...");
       const participants = await ZoomAppsSdk.getMeetingParticipants();
+      console.log("Participants data:", participants);
+
       if (participants && participants.length > 0) {
         buildParticipantGrid(participants);
       } else {
+        console.warn("No participants returned — using manual mode");
         showManualMode();
       }
     } catch (err) {
-      console.warn("Could not fetch participants:", err);
+      console.error("Error getting participants:", err);
       showManualMode();
     }
   })
