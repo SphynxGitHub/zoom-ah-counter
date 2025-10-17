@@ -1,15 +1,23 @@
-{
-  "name": "Ah Counter",
-  "version": "1.0.0",
-  "description": "Play clicks and track filler words during meetings.",
-  "permissions": {
-    "inMeeting": ["read", "write"]
-  },
-  "support": {
-    "help_url": "https://yourwebsite.com/support"
-  },
-  "homepage_url": "https://yourwebsite.com",
-  "redirect_url": "https://yourwebsite.com",
-  "scopes": ["zoomapp:inmeeting"],
-  "run_url": "https://yourwebsite.com/index.html"
-}
+"features": {
+  "zoomAppSdk": {
+    "enabled": true,
+    "apis": [
+      "getUserContext",
+      "getMeetingContext",
+      "getMeetingParticipants",
+      "sendAppInvitation",
+      "sendAppInvitationToAllParticipants",
+      "launchAppInMeeting"
+    ]
+  }
+},
+"scopes": [
+  {
+    "name": "zoomapp:inmeeting",
+    "type": "user",
+    "required": true,
+    "reason": "Used to access meeting context and participants for the Ah-Counter functionality."
+  }
+],
+"allowListDomains": ["zoom-ah-counter.pages.dev"],
+"runOn": ["inMeeting"]
