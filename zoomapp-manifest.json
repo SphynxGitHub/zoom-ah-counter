@@ -1,0 +1,15 @@
+{
+  "name": "Ah Counter",
+  "version": "1.0.0",
+  "description": "Play clicks and track filler words during meetings.",
+  "permissions": {
+    "inMeeting": ["read", "write"]
+  },
+  "support": {
+    "help_url": "https://yourwebsite.com/support"
+  },
+  "homepage_url": "https://yourwebsite.com",
+  "redirect_url": "https://yourwebsite.com",
+  "scopes": ["zoomapp:inmeeting"],
+  "run_url": "https://yourwebsite.com/index.html"
+}
