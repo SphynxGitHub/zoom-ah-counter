@@ -17,11 +17,24 @@
 
     <div class="controls">
       <button id="addCustom">+ Add Other</button>
+      <button id="showSummary">Show Summary</button>
       <button id="resetAll">Reset All</button>
     </div>
 
     <div class="footer">
       Make sure “Share Computer Audio” is ON 🔊
+    </div>
+  </div>
+
+  <!-- Summary modal -->
+  <div id="summaryModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Summary of Counts</h2>
+      <div id="summaryList"></div>
+      <div class="modal-buttons">
+        <button id="copySummary">Copy</button>
+        <button id="closeSummary">Close</button>
+      </div>
     </div>
   </div>
 
