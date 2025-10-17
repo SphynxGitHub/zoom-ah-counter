@@ -41,14 +41,22 @@ h1 { margin-bottom: 30px; }
   margin-top: 6px;
 }
 .filler-btn {
-  font-size: 12px;
-  padding: 4px 8px;
-  border: 1px solid #ccc;
+  font-size: 13px;
+  font-weight: 600;
+  color: #222; /* darker text */
+  padding: 6px 10px;
+  border: 1px solid #999;
   border-radius: 6px;
-  background: #f9f9f9;
+  background: #f2f2f2; /* slightly darker background */
   cursor: pointer;
+  transition: background 0.2s, color 0.2s;
 }
-.filler-btn:hover { background: #eef; }
+.filler-btn:hover {
+  background: #dbeafe; /* light blue hover */
+  border-color: #3b82f6;
+  color: #000;
+}
+
 .sub { margin-left: 1em; font-size: 0.9em; color: blue; }
 
 
