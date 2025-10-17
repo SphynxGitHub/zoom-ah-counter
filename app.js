@@ -7,39 +7,48 @@ let counts = {};
 let clickSound = new Audio("sounds/pop.wav");
 clickSound.preload = "auto";
 
-// Initialize with default participants
 window.addEventListener("DOMContentLoaded", () => {
   defaultNames.forEach(name => {
     counts[name] = { total: 0, details: {} };
+    fillers.forEach(f => counts[name].details[f] = 0);
   });
-  buildParticipantGrid();
+  buildTable();
 });
 
-function buildParticipantGrid() {
+function buildTable() {
   const container = document.getElementById("participantContainer");
   container.innerHTML = "";
 
-  const names = Object.keys(counts);
-  if (names.length === 0) {
-    container.innerHTML = "<div class='loading'>Add participants to begin</div>";
-    return;
-  }
+  // header row
+  const table = document.createElement("table");
+  table.className = "counter-table";
+  const headerRow = document.createElement("tr");
+  headerRow.innerHTML = `
+    <th>Speaker</th>
+    <th>Total</th>
+    ${fillers.map(f => `<th>${f}</th>`).join("")}
+    <th></th>
+  `;
+  table.appendChild(headerRow);
 
-  names.forEach(name => {
-    const div = document.createElement("div");
-    div.className = "word-card";
-    div.innerHTML = `
-      <div class="remove-btn" title="Remove ${name}">×</div>
-      <div class="word">${name}</div>
-      <div class="count" id="count-${name}">${counts[name].total}</div>
-      <div class="fillers">
-        ${fillers.map(f => `<button class="filler-btn" data-name="${name}" data-filler="${f}">${f}</button>`).join("")}
-      </div>
+  // body rows
+  Object.keys(counts).forEach(name => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td class="name">${name}</td>
+      <td class="total" id="total-${name}">${counts[name].total}</td>
+      ${fillers.map(f =>
+        `<td><button class="filler-btn" data-name="${name}" data-filler="${f}">
+          ${counts[name].details[f] || 0}
+        </button></td>`).join("")}
+      <td><span class="remove-btn" data-name="${name}">×</span></td>
     `;
-    container.appendChild(div);
+    table.appendChild(row);
   });
 
-  // filler click events
+  container.appendChild(table);
+
+  // filler button clicks
   document.querySelectorAll(".filler-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       const name = e.target.dataset.name;
@@ -48,13 +57,12 @@ function buildParticipantGrid() {
     });
   });
 
-  // remove button events
+  // remove speaker
   document.querySelectorAll(".remove-btn").forEach(btn => {
     btn.addEventListener("click", e => {
-      const parent = e.target.closest(".word-card");
-      const name = parent.querySelector(".word").textContent;
+      const name = e.target.dataset.name;
       delete counts[name];
-      buildParticipantGrid();
+      buildTable();
     });
   });
 }
@@ -63,36 +71,29 @@ function handleClick(name, filler) {
   clickSound.currentTime = 0;
   clickSound.play().catch(() => {});
 
-  if (!counts[name]) counts[name] = { total: 0, details: {} };
+  counts[name].details[filler] = (counts[name].details[filler] || 0) + 1;
+  counts[name].total = Object.values(counts[name].details).reduce((a, b) => a + b, 0);
 
-  let actual = filler;
-  if (filler === "Other") {
-    const custom = prompt("Enter custom filler word:");
-    if (!custom) return;
-    actual = custom.trim();
-  }
-
-  counts[name].total++;
-  counts[name].details[actual] = (counts[name].details[actual] || 0) + 1;
-
-  document.getElementById(`count-${name}`).textContent = counts[name].total;
+  document.getElementById(`total-${name}`).textContent = counts[name].total;
+  buildTable(); // refresh to show updated button numbers
 }
 
-// add new participant manually
 document.getElementById("addCustom").addEventListener("click", () => {
   const name = prompt("Enter speaker name:");
   if (!name || counts[name]) return;
   counts[name] = { total: 0, details: {} };
-  buildParticipantGrid();
+  fillers.forEach(f => counts[name].details[f] = 0);
+  buildTable();
 });
 
-// reset all counts
 document.getElementById("resetAll").addEventListener("click", () => {
-  Object.keys(counts).forEach(n => counts[n] = { total: 0, details: {} });
-  buildParticipantGrid();
+  Object.keys(counts).forEach(n => {
+    counts[n].total = 0;
+    fillers.forEach(f => counts[n].details[f] = 0);
+  });
+  buildTable();
 });
 
-// summary modal
 const modal = document.getElementById("summaryModal");
 const summaryList = document.getElementById("summaryList");
 const copyBtn = document.getElementById("copySummary");
