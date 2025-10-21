@@ -44,6 +44,33 @@ function saveData() {
   localStorage.setItem("speakers", JSON.stringify(Object.keys(counts)));
 }
 
+// === Toast Notification ===
+function showToast(message) {
+  const toast = document.createElement("div");
+  toast.textContent = message;
+  toast.style.position = "fixed";
+  toast.style.bottom = "20px";
+  toast.style.right = "20px";
+  toast.style.background = "#3b82f6";
+  toast.style.color = "white";
+  toast.style.padding = "10px 16px";
+  toast.style.borderRadius = "8px";
+  toast.style.fontSize = "14px";
+  toast.style.fontWeight = "500";
+  toast.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+  toast.style.zIndex = "99999";
+  toast.style.opacity = "0";
+  toast.style.transition = "opacity 0.3s ease";
+
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => (toast.style.opacity = "1"));
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 400);
+  }, 2000);
+}
+
 // === Update header totals live ===
 function updateHeaderTotals() {
   document.querySelectorAll(".sub-total").forEach(cell => {
@@ -160,6 +187,8 @@ function buildTable() {
   
           // ✅ Persist new filler in localStorage
           saveData();
+          showToast(`✨ Added new filler: “${clean}” ✨`);
+
         }
   
         // Increment for current speaker
