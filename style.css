@@ -146,17 +146,6 @@
 .filler-btn:active {
   transform: scale(0.95);
 }
-.tip-header {
-  background: #e0f2fe;
-  border: 1px solid #3b82f6;
-  color: #1e3a8a;
-  font-weight: 500;
-  padding: 8px 14px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  text-align: center;
-  font-size: 14px;
-}
 
 .remove-sample {
   color: #e11d48;
@@ -209,6 +198,43 @@
   display: inline-block;
   margin-left: 6px;
   vertical-align: middle;
+}
+
+.tip-header {
+  background: #e0f2fe;
+  border: 1px solid #3b82f6;
+  color: #1e3a8a;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 10px;
+  margin: 10px auto 20px;
+  max-width: 900px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.remove-filler {
+  color: #e11d48;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 4px;
+  font-size: 13px;
+}
+.remove-filler:hover {
+  color: #991b1b;
+}
+
+.sub-total {
+  background: #f0f9ff;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
 }
 
 /* keep header sticky for long lists */
