@@ -167,8 +167,13 @@ function buildTable() {
     btn.addEventListener("click", e => {
       const { name, filler } = e.target.dataset;
   
-      // Special case: "Other" opens prompt
-     if (filler.toLowerCase() === "other") {
+      // Special case: "Other" opens modal — play sound first
+      if (filler.toLowerCase() === "other") {
+        // ✅ Play sound immediately
+        clickSound.currentTime = 0;
+        clickSound.play().catch(() => {});
+      
+        // Then open modal to type in the actual word
         openFillerModal(name);
         return;
       }
