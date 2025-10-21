@@ -2,41 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Toastmasters Ah-Counter</title>
+  <title>Toastmasters Ah-Counter 🎙️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="wrap">
-  <h1>Toastmasters Ah-Counter 🎙️</h1>
+    <h1>Toastmasters Ah-Counter 🎙️</h1>
 
-  <!-- subheader appears here dynamically -->
-  <div id="participantContainer" class="grid">
-    <div class="loading">Add participants to begin</div>
-  </div>
+    <div id="usageHeader" class="subheader">
+      💡 <strong>How to Use:</strong> Left-click adds +1, right-click subtracts −1. 
+      Click <span class="remove-sample">×</span> to remove a speaker or filler word.
+    </div>
 
-  <div class="controls">
-    <button id="addSpeaker">+ Add Speaker</button>
-    <button id="showSummary">Show Summary</button>
-    <button id="resetAll">Reset All</button>
-  </div>
+    <div id="participantContainer" class="grid">
+      <div class="loading">Add participants to begin</div>
+    </div>
 
-  <div class="footer">
-    🔊 Make sure your computer sound is on
-  </div>
-</div>
+    <div class="controls">
+      <button id="addSpeaker">+ Add Speaker</button>
+      <button id="showSummary">Show Summary</button>
+      <button id="resetAll">Reset All</button>
+    </div>
 
-<!-- Summary modal -->
-<div id="summaryModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Summary of Counts</h2>
-    <div id="summaryList"></div>
-    <div class="modal-buttons">
-      <button id="copySummary">Copy</button>
-      <button id="closeSummary">Close</button>
+    <div class="footer">
+      🔊 Make sure your computer sound is on
     </div>
   </div>
-</div>
+
+  <!-- Summary modal -->
+  <div id="summaryModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Summary of Counts</h2>
+      <div id="summaryList"></div>
+      <div class="modal-buttons">
+        <button id="copySummary">Copy</button>
+        <button id="closeSummary">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
