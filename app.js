@@ -22,10 +22,17 @@ function saveData() {
   localStorage.setItem("speakers", JSON.stringify(Object.keys(counts)));
 }
 
-// === Build Table ===
 function buildTable() {
   const container = document.getElementById("participantContainer");
   container.innerHTML = "";
+
+  // === Instruction Header ===
+  const headerNote = document.createElement("div");
+  headerNote.className = "tip-header";
+  headerNote.innerHTML = `
+    💡 <strong>How to Use:</strong> Left-click adds +1, right-click subtracts −1, click <span class="remove-sample">×</span> to remove a speaker.
+  `;
+  container.appendChild(headerNote);
 
   const table = document.createElement("table");
   table.className = "counter-table";
@@ -44,7 +51,8 @@ function buildTable() {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td class="name">
-        ${name} <span class="remove-btn" data-name="${name}" title="Remove ${name}">×</span>
+        <span class="speaker-text">${name}</span>
+        <span class="remove-btn" data-name="${name}" title="Remove ${name}">×</span>
       </td>
       <td class="total" id="total-${name}">${counts[name].total}</td>
       ${fillers
@@ -63,13 +71,7 @@ function buildTable() {
 
   container.appendChild(table);
 
-  // Tooltip
-  const tip = document.createElement("div");
-  tip.className = "tip";
-  tip.innerHTML = "💡 Tip: Left-click adds +1, right-click subtracts −1, click × to remove a speaker.";
-  container.appendChild(tip);
-
-  // Events
+  // === Event bindings ===
   document.querySelectorAll(".filler-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       const name = e.target.dataset.name;
@@ -165,9 +167,9 @@ if (!hideSummaryBtn) {
 showSummaryBtn.addEventListener("click", () => {
   let html = "";
   for (const [name, data] of Object.entries(counts)) {
-    html += `<div><strong>${name}</strong>: ${data.total}</div>`;
+    html += `<div style="margin-bottom:6px;"><strong>${name}</strong>: ${data.total}</div>`;
     for (const [f, c] of Object.entries(data.details)) {
-      html += `<div class='sub'>– ${f}: ${c}</div>`;
+      if (c > 0) html += `<div class='sub'>– ${f}: ${c}</div>`;
     }
   }
   summaryList.innerHTML = html || "<em>No counts yet.</em>";
