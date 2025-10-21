@@ -141,41 +141,55 @@ const copyBtn = document.getElementById("copySummary");
 const closeBtn = document.getElementById("closeSummary");
 const showSummaryBtn = document.getElementById("showSummary");
 
-// Add a new Hide Summary button dynamically
-const hideSummaryBtn = document.createElement("button");
-hideSummaryBtn.id = "hideSummary";
-hideSummaryBtn.textContent = "Hide Summary";
-hideSummaryBtn.style.display = "none"; // hidden until shown
-showSummaryBtn.insertAdjacentElement("afterend", hideSummaryBtn);
+// Create and insert a Hide Summary button
+let hideSummaryBtn = document.getElementById("hideSummary");
+if (!hideSummaryBtn) {
+  hideSummaryBtn = document.createElement("button");
+  hideSummaryBtn.id = "hideSummary";
+  hideSummaryBtn.textContent = "Hide Summary";
+  hideSummaryBtn.style.display = "none";
+  showSummaryBtn.insertAdjacentElement("afterend", hideSummaryBtn);
+}
 
+// Show Summary
 showSummaryBtn.addEventListener("click", () => {
   let html = "";
   for (const [name, data] of Object.entries(counts)) {
     html += `<div><strong>${name}</strong>: ${data.total}</div>`;
-    for (const [f, c] of Object.entries(data.details))
+    for (const [f, c] of Object.entries(data.details)) {
       html += `<div class='sub'>– ${f}: ${c}</div>`;
+    }
   }
   summaryList.innerHTML = html || "<em>No counts yet.</em>";
+
+  // Display modal on top
   modal.classList.remove("hidden");
+  modal.style.display = "flex";
+
+  // Toggle buttons
   showSummaryBtn.style.display = "none";
   hideSummaryBtn.style.display = "inline-block";
-
-  copyBtn.onclick = () => {
-    navigator.clipboard.writeText(summaryList.innerText.trim());
-    copyBtn.textContent = "Copied!";
-    setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
-  };
 });
 
-// ✅ new Hide Summary toggle
+// Hide Summary (new button)
 hideSummaryBtn.addEventListener("click", () => {
   modal.classList.add("hidden");
+  modal.style.display = "none";
   hideSummaryBtn.style.display = "none";
   showSummaryBtn.style.display = "inline-block";
 });
 
+// Close button inside modal
 closeBtn.addEventListener("click", () => {
   modal.classList.add("hidden");
+  modal.style.display = "none";
   hideSummaryBtn.style.display = "none";
   showSummaryBtn.style.display = "inline-block";
+});
+
+// Copy text
+copyBtn.addEventListener("click", () => {
+  navigator.clipboard.writeText(summaryList.innerText.trim());
+  copyBtn.textContent = "Copied!";
+  setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
 });
