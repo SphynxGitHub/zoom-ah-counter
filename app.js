@@ -139,8 +139,16 @@ const modal = document.getElementById("summaryModal");
 const summaryList = document.getElementById("summaryList");
 const copyBtn = document.getElementById("copySummary");
 const closeBtn = document.getElementById("closeSummary");
+const showSummaryBtn = document.getElementById("showSummary");
 
-document.getElementById("showSummary").addEventListener("click", () => {
+// Add a new Hide Summary button dynamically
+const hideSummaryBtn = document.createElement("button");
+hideSummaryBtn.id = "hideSummary";
+hideSummaryBtn.textContent = "Hide Summary";
+hideSummaryBtn.style.display = "none"; // hidden until shown
+showSummaryBtn.insertAdjacentElement("afterend", hideSummaryBtn);
+
+showSummaryBtn.addEventListener("click", () => {
   let html = "";
   for (const [name, data] of Object.entries(counts)) {
     html += `<div><strong>${name}</strong>: ${data.total}</div>`;
@@ -149,6 +157,8 @@ document.getElementById("showSummary").addEventListener("click", () => {
   }
   summaryList.innerHTML = html || "<em>No counts yet.</em>";
   modal.classList.remove("hidden");
+  showSummaryBtn.style.display = "none";
+  hideSummaryBtn.style.display = "inline-block";
 
   copyBtn.onclick = () => {
     navigator.clipboard.writeText(summaryList.innerText.trim());
@@ -157,4 +167,15 @@ document.getElementById("showSummary").addEventListener("click", () => {
   };
 });
 
-closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+// ✅ new Hide Summary toggle
+hideSummaryBtn.addEventListener("click", () => {
+  modal.classList.add("hidden");
+  hideSummaryBtn.style.display = "none";
+  showSummaryBtn.style.display = "inline-block";
+});
+
+closeBtn.addEventListener("click", () => {
+  modal.classList.add("hidden");
+  hideSummaryBtn.style.display = "none";
+  showSummaryBtn.style.display = "inline-block";
+});
