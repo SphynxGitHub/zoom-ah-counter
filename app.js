@@ -4,6 +4,23 @@ let defaultNames = JSON.parse(localStorage.getItem("speakers")) || [
   "Steve", "Jarrod", "Arielle", "Dave", "Khan", "Sandy", "Len", "Anthony", "Renson"
 ];
 
+// Summary elements (ensure these exist before adding listeners)
+const modal          = document.getElementById("summaryModal");
+const summaryList    = document.getElementById("summaryList");
+const copyBtn        = document.getElementById("copySummary");
+const closeBtn       = document.getElementById("closeSummary");
+const showSummaryBtn = document.getElementById("showSummary");
+
+// Create/ensure Hide Summary button right after Show
+let hideSummaryBtn = document.getElementById("hideSummary");
+if (!hideSummaryBtn) {
+  hideSummaryBtn = document.createElement("button");
+  hideSummaryBtn.id = "hideSummary";
+  hideSummaryBtn.textContent = "Hide Summary";
+  hideSummaryBtn.style.display = "none";
+  showSummaryBtn.insertAdjacentElement("afterend", hideSummaryBtn);
+}
+
 let counts = {};
 let clickSound = new Audio("sounds/pop.wav");
 clickSound.preload = "auto";
@@ -62,15 +79,19 @@ function buildTable() {
   const container = document.getElementById("participantContainer");
   container.innerHTML = "";
 
-  // === Tooltip always under title ===
-  const note = document.querySelector(".tip-header");
-  if (note) {
-    note.innerHTML = `
-      💡 <strong>How to Use:</strong> Left-click adds +1, right-click subtracts −1.
-      Click <span class="remove-sample">×</span> to remove a speaker or filler word.
-    `;
+  // === Sub-header always under the page title ===
+  let usage = document.getElementById("usageHeader");
+  if (!usage) {
+    const title = document.querySelector("h1");
+    usage = document.createElement("div");
+    usage.id = "usageHeader";
+    usage.className = "subheader";
+    title.insertAdjacentElement("afterend", usage);
   }
-
+  usage.innerHTML = `
+    💡 <strong>How to Use:</strong> Left-click adds +1, right-click subtracts −1. 
+    Click <span class="remove-sample">×</span> to remove a speaker or filler word.
+  `;
   const table = document.createElement("table");
   table.className = "counter-table";
 
@@ -79,29 +100,26 @@ function buildTable() {
     Object.values(counts).reduce((acc, s) => acc + (s.details[f] || 0), 0)
   );
 
-  // === Header Row 1 (filler names + remove icons) ===
+  // === Header Row 1: filler names + remove icons (except “Other”) ===
   const headerRow1 = document.createElement("tr");
   headerRow1.innerHTML = `
     <th rowspan="2">Speaker</th>
     <th rowspan="2">Total</th>
-    ${fillers
-      .map(
-        (f, i) =>
-          `<th>${f} <span class="remove-filler" data-index="${i}" title="Remove '${f}'">×</span></th>`
-      )
-      .join("")}
+    ${fillers.map((f, i) => {
+      // “Other” cannot be removed
+      const removable = f !== "Other";
+      return `<th>${f}${removable ? ` <span class="remove-filler" data-index="${i}" title="Remove '${f}'">×</span>` : ""}</th>`;
+    }).join("")}
   `;
-  table.appendChild(headerRow1);
-
-  // === Header Row 2 (totals under each filler) ===
+  
+  // === Header Row 2: totals directly below each filler (NO extra blanks) ===
   const headerRow2 = document.createElement("tr");
   headerRow2.innerHTML =
-    "<th></th><th></th>" +
-    fillers
-      .map(
-        (f, i) => `<th class="sub-total" data-filler="${f}">${fillerTotals[i]}</th>`
-      )
-      .join("");
+    fillers.map((f, i) =>
+      `<th class="sub-total" data-filler="${f}">${
+        Object.values(counts).reduce((sum, s) => sum + (s.details[f] || 0), 0)
+      }</th>`
+    ).join("");
   table.appendChild(headerRow2);
 
   // === Speaker Rows ===
@@ -211,19 +229,16 @@ if (!hideSummaryBtn) {
 showSummaryBtn.addEventListener("click", () => {
   let html = "";
   for (const [name, data] of Object.entries(counts)) {
-    html += `<div><strong>${name}</strong>: ${data.total}</div>`;
+    html += `<div style="margin-bottom:6px;"><strong>${name}</strong>: ${data.total}</div>`;
     for (const [f, c] of Object.entries(data.details)) {
       if (c > 0) html += `<div class='sub'>– ${f}: ${c}</div>`;
     }
   }
 
-  // Overall Totals
+  // Overall totals section
   html += `<hr><div><strong>Overall Totals</strong></div>`;
   fillers.forEach(f => {
-    const total = Object.values(counts).reduce(
-      (sum, s) => sum + (s.details[f] || 0),
-      0
-    );
+    const total = Object.values(counts).reduce((sum, s) => sum + (s.details[f] || 0), 0);
     html += `<div class='sub'>${f}: ${total}</div>`;
   });
 
@@ -233,17 +248,14 @@ showSummaryBtn.addEventListener("click", () => {
   hideSummaryBtn.style.display = "inline-block";
 });
 
-// Hide Summary
-hideSummaryBtn.addEventListener("click", () => {
+// Hide Summary (both buttons)
+function hideModal() {
   modal.style.display = "none";
   hideSummaryBtn.style.display = "none";
   showSummaryBtn.style.display = "inline-block";
-});
-closeBtn.addEventListener("click", () => {
-  modal.style.display = "none";
-  hideSummaryBtn.style.display = "none";
-  showSummaryBtn.style.display = "inline-block";
-});
+}
+hideSummaryBtn.addEventListener("click", hideModal);
+closeBtn.addEventListener("click", hideModal);
 
 // Copy Summary
 copyBtn.addEventListener("click", () => {
