@@ -9,6 +9,7 @@ let defaultNames = JSON.parse(localStorage.getItem("speakers")) || [
 let counts = {};
 let clickSound = new Audio("sounds/pop.wav");
 clickSound.preload = "auto";
+let suppressNextSound = false;
 
 // === Element references ===
 const modal          = document.getElementById("summaryModal");
@@ -85,10 +86,11 @@ function updateHeaderTotals() {
 
 // === Handle clicks ===
 function handleClick(name, filler, delta = 1, buttonEl) {
-  if (delta > 0) {
+  if (delta > 0 && !suppressNextSound) {
     clickSound.currentTime = 0;
     clickSound.play().catch(() => {});
   }
+  suppressNextSound = false; // reset after each call
 
   const current = counts[name].details[filler] || 0;
   const newCount = Math.max(0, current + delta);
@@ -339,9 +341,10 @@ saveFillerBtn.addEventListener("click", () => {
     saveData();
     showToast(`✨ Added new filler: “${clean}” ✨`);
   }
-  if (pendingOtherClick) handleClick(pendingOtherClick, clean, 1);
-  closeFillerModal();
-  buildTable();
+  if (pendingOtherClick) {
+    suppressNextSound = true; // ✅ prevent double sound
+    handleClick(pendingOtherClick, clean, 1);
+  }
 });
 
 cancelFillerBtn.addEventListener("click", closeFillerModal);
