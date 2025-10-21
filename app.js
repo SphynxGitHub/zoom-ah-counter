@@ -115,12 +115,12 @@ function buildTable() {
   headerRow1.innerHTML = `
     <th rowspan="2">Speaker</th>
     <th rowspan="2">Total</th>
-    ${fillers
-      .map((f, i) => {
-        const isOther = f.toLowerCase() === "other";
-        return `<th>${f}${!isOther ? ` <span class="remove-filler" data-index="${i}" title="Remove '${f}'">×</span>` : ""}</th>`;
-      })
-      .join("")}
+    ${fillers.map((f, i) => {
+      const isOther = f.toLowerCase() === "other";
+      return `<th>${f}${!isOther ? 
+        ` <button class="remove-filler" data-index="${i}" title="Remove '${f}'" aria-label="Remove ${f}">×</button>` 
+        : ""}</th>`;
+    }).join("")}
   `;
   table.appendChild(headerRow1);
 
@@ -193,20 +193,13 @@ function buildTable() {
     });
   });
 
-  document.querySelectorAll(".remove-filler").forEach(icon => {
-    icon.addEventListener("click", e => {
-      const index = parseInt(e.target.dataset.index);
-      const fillerToRemove = fillers[index];
-      if (fillerToRemove.toLowerCase() === "other") return;
-      if (confirm(`Remove filler '${fillerToRemove}' from all speakers?`)) {
-        fillers.splice(index, 1);
-        Object.values(counts).forEach(speaker => {
-          delete speaker.details[fillerToRemove];
-          speaker.total = Object.values(speaker.details).reduce((a, b) => a + b, 0);
-        });
-        saveData();
-        buildTable();
-      }
+  // Remove filler (Zoom-safe confirm)
+  document.querySelectorAll(".remove-filler").forEach(btn => {
+    btn.addEventListener("click", e => {
+      const index = parseInt(e.currentTarget.dataset.index, 10);
+      const name  = fillers[index];
+      if (!name || name.toLowerCase() === "other") return; // guard
+      openConfirmRemove(index, name);
     });
   });
 }
@@ -265,6 +258,44 @@ const addFillerModal = document.getElementById("addFillerModal");
 const newFillerInput = document.getElementById("newFillerInput");
 const saveFillerBtn   = document.getElementById("saveFiller");
 const cancelFillerBtn = document.getElementById("cancelFiller");
+
+// Confirm modal wiring
+const confirmModal  = document.getElementById("confirmModal");
+const confirmText   = document.getElementById("confirmText");
+const confirmYesBtn = document.getElementById("confirmYes");
+const confirmNoBtn  = document.getElementById("confirmNo");
+
+let pendingRemoveIndex = null;
+let pendingRemoveName  = null;
+
+function openConfirmRemove(index, fillerName) {
+  pendingRemoveIndex = index;
+  pendingRemoveName  = fillerName;
+  confirmText.textContent = `Remove the filler “${fillerName}” from all speakers?`;
+  confirmModal.classList.add("show");
+}
+function closeConfirm() {
+  pendingRemoveIndex = null;
+  pendingRemoveName  = null;
+  confirmModal.classList.remove("show");
+}
+
+confirmNoBtn.addEventListener("click", closeConfirm);
+confirmYesBtn.addEventListener("click", () => {
+  if (pendingRemoveIndex == null) return;
+  const fillerToRemove = fillers[pendingRemoveIndex];
+  if (fillerToRemove && fillerToRemove.toLowerCase() !== "other") {
+    fillers.splice(pendingRemoveIndex, 1);
+    Object.values(counts).forEach(speaker => {
+      delete speaker.details[fillerToRemove];
+      speaker.total = Object.values(speaker.details).reduce((a, b) => a + b, 0);
+    });
+    saveData();
+    buildTable();
+    showToast(`Removed filler: “${fillerToRemove}”`);
+  }
+  closeConfirm();
+});
 
 let pendingOtherClick = null;
 
