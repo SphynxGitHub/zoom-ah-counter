@@ -177,23 +177,19 @@ function buildTable() {
   
         // Only add if not already a filler
         if (!fillers.includes(clean)) {
-          // Insert before "Other"
           const otherIndex = fillers.findIndex(f => f.toLowerCase() === "other");
           const insertAt = otherIndex >= 0 ? otherIndex : fillers.length;
           fillers.splice(insertAt, 0, clean);
-  
-          // Add to all speakers with count = 0
           Object.values(counts).forEach(s => (s.details[clean] = 0));
-  
-          // ✅ Persist new filler in localStorage
           saveData();
           showToast(`✨ Added new filler: “${clean}” ✨`);
-
         }
-  
+        
         // Increment for current speaker
         handleClick(name, clean, 1);
-        buildTable();
+        
+        // ✅ Delay rebuild slightly so prompt completes first
+        setTimeout(buildTable, 100);
         return;
       }
   
