@@ -4,14 +4,20 @@ let defaultNames = JSON.parse(localStorage.getItem("speakers")) || [
   "Steve", "Jarrod", "Arielle", "Dave", "Khan", "Sandy", "Len", "Anthony", "Renson"
 ];
 
-// Summary elements (ensure these exist before adding listeners)
+let counts = {};
+let clickSound = new Audio("sounds/pop.wav");
+clickSound.preload = "auto";
+
+// === Element references ===
 const modal          = document.getElementById("summaryModal");
 const summaryList    = document.getElementById("summaryList");
 const copyBtn        = document.getElementById("copySummary");
 const closeBtn       = document.getElementById("closeSummary");
 const showSummaryBtn = document.getElementById("showSummary");
+const addSpeakerBtn  = document.getElementById("addSpeaker");
+const resetAllBtn    = document.getElementById("resetAll");
 
-// Create/ensure Hide Summary button right after Show
+// Create “Hide Summary” button if missing
 let hideSummaryBtn = document.getElementById("hideSummary");
 if (!hideSummaryBtn) {
   hideSummaryBtn = document.createElement("button");
@@ -20,10 +26,6 @@ if (!hideSummaryBtn) {
   hideSummaryBtn.style.display = "none";
   showSummaryBtn.insertAdjacentElement("afterend", hideSummaryBtn);
 }
-
-let counts = {};
-let clickSound = new Audio("sounds/pop.wav");
-clickSound.preload = "auto";
 
 // === Initialize on load ===
 window.addEventListener("DOMContentLoaded", () => {
@@ -92,34 +94,35 @@ function buildTable() {
     💡 <strong>How to Use:</strong> Left-click adds +1, right-click subtracts −1. 
     Click <span class="remove-sample">×</span> to remove a speaker or filler word.
   `;
+
   const table = document.createElement("table");
   table.className = "counter-table";
-
-  // === Calculate totals for each filler ===
-  const fillerTotals = fillers.map(f =>
-    Object.values(counts).reduce((acc, s) => acc + (s.details[f] || 0), 0)
-  );
 
   // === Header Row 1: filler names + remove icons (except “Other”) ===
   const headerRow1 = document.createElement("tr");
   headerRow1.innerHTML = `
     <th rowspan="2">Speaker</th>
     <th rowspan="2">Total</th>
-    ${fillers.map((f, i) => {
-      // “Other” cannot be removed
-      const removable = f !== "Other";
-      return `<th>${f}${removable ? ` <span class="remove-filler" data-index="${i}" title="Remove '${f}'">×</span>` : ""}</th>`;
-    }).join("")}
+    ${fillers
+      .map((f, i) => {
+        const removable = f !== "Other";
+        return `<th>${f}${removable ? ` <span class="remove-filler" data-index="${i}" title="Remove '${f}'">×</span>` : ""}</th>`;
+      })
+      .join("")}
   `;
-  
-  // === Header Row 2: totals directly below each filler (NO extra blanks) ===
+  table.appendChild(headerRow1); // ✅ You were missing this line
+
+  // === Header Row 2: totals ===
   const headerRow2 = document.createElement("tr");
-  headerRow2.innerHTML =
-    fillers.map((f, i) =>
-      `<th class="sub-total" data-filler="${f}">${
-        Object.values(counts).reduce((sum, s) => sum + (s.details[f] || 0), 0)
-      }</th>`
-    ).join("");
+  headerRow2.innerHTML = fillers
+    .map(
+      f =>
+        `<th class="sub-total" data-filler="${f}">${Object.values(counts).reduce(
+          (sum, s) => sum + (s.details[f] || 0),
+          0
+        )}</th>`
+    )
+    .join("");
   table.appendChild(headerRow2);
 
   // === Speaker Rows ===
@@ -170,11 +173,12 @@ function buildTable() {
     });
   });
 
-  // Remove filler (including "Other")
+  // Remove filler (except "Other")
   document.querySelectorAll(".remove-filler").forEach(icon => {
     icon.addEventListener("click", e => {
       const index = parseInt(e.target.dataset.index);
       const fillerToRemove = fillers[index];
+      if (fillerToRemove === "Other") return; // ❌ skip removal
       if (confirm(`Remove filler '${fillerToRemove}' from all speakers?`)) {
         fillers.splice(index, 1);
         Object.values(counts).forEach(speaker => {
@@ -189,43 +193,30 @@ function buildTable() {
 }
 
 // === Add Speaker ===
-document.getElementById("addCustom").addEventListener("click", () => {
+addSpeakerBtn.addEventListener("click", () => {
   const name = prompt("Enter speaker name:");
-  if (!name || counts[name]) return;
-  counts[name] = { total: 0, details: {} };
-  fillers.forEach(f => (counts[name].details[f] = 0));
+  if (!name) return;
+  const clean = name.trim();
+  if (!clean || counts[clean]) return;
+
+  counts[clean] = { total: 0, details: {} };
+  fillers.forEach(f => (counts[clean].details[f] = 0));
   saveData();
   buildTable();
 });
 
 // === Reset All ===
-document.getElementById("resetAll").addEventListener("click", () => {
-  if (!confirm("Reset all counts?")) return;
-  Object.keys(counts).forEach(n => {
-    counts[n].total = 0;
-    fillers.forEach(f => (counts[n].details[f] = 0));
+resetAllBtn.addEventListener("click", () => {
+  if (!confirm("Clear all counts?")) return;
+  Object.keys(counts).forEach(name => {
+    counts[name].total = 0;
+    for (const f in counts[name].details) counts[name].details[f] = 0;
   });
   saveData();
   buildTable();
 });
 
 // === Summary Modal Logic ===
-const modal = document.getElementById("summaryModal");
-const summaryList = document.getElementById("summaryList");
-const copyBtn = document.getElementById("copySummary");
-const closeBtn = document.getElementById("closeSummary");
-const showSummaryBtn = document.getElementById("showSummary");
-let hideSummaryBtn = document.getElementById("hideSummary");
-
-if (!hideSummaryBtn) {
-  hideSummaryBtn = document.createElement("button");
-  hideSummaryBtn.id = "hideSummary";
-  hideSummaryBtn.textContent = "Hide Summary";
-  hideSummaryBtn.style.display = "none";
-  showSummaryBtn.insertAdjacentElement("afterend", hideSummaryBtn);
-}
-
-// Show Summary
 showSummaryBtn.addEventListener("click", () => {
   let html = "";
   for (const [name, data] of Object.entries(counts)) {
@@ -235,7 +226,6 @@ showSummaryBtn.addEventListener("click", () => {
     }
   }
 
-  // Overall totals section
   html += `<hr><div><strong>Overall Totals</strong></div>`;
   fillers.forEach(f => {
     const total = Object.values(counts).reduce((sum, s) => sum + (s.details[f] || 0), 0);
@@ -248,7 +238,6 @@ showSummaryBtn.addEventListener("click", () => {
   hideSummaryBtn.style.display = "inline-block";
 });
 
-// Hide Summary (both buttons)
 function hideModal() {
   modal.style.display = "none";
   hideSummaryBtn.style.display = "none";
@@ -257,7 +246,6 @@ function hideModal() {
 hideSummaryBtn.addEventListener("click", hideModal);
 closeBtn.addEventListener("click", hideModal);
 
-// Copy Summary
 copyBtn.addEventListener("click", () => {
   navigator.clipboard.writeText(summaryList.innerText.trim());
   copyBtn.textContent = "Copied!";
