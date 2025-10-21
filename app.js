@@ -168,31 +168,11 @@ function buildTable() {
       const { name, filler } = e.target.dataset;
   
       // Special case: "Other" opens prompt
-      if (filler.toLowerCase() === "other") {
-        const newFiller = prompt("Enter the filler word used:");
-        if (!newFiller) return;
-  
-        const clean = newFiller.trim();
-        if (!clean) return;
-  
-        // Only add if not already a filler
-        if (!fillers.includes(clean)) {
-          const otherIndex = fillers.findIndex(f => f.toLowerCase() === "other");
-          const insertAt = otherIndex >= 0 ? otherIndex : fillers.length;
-          fillers.splice(insertAt, 0, clean);
-          Object.values(counts).forEach(s => (s.details[clean] = 0));
-          saveData();
-          showToast(`✨ Added new filler: “${clean}” ✨`);
-        }
-        
-        // Increment for current speaker
-        handleClick(name, clean, 1);
-        
-        // ✅ Delay rebuild slightly so prompt completes first
-        setTimeout(buildTable, 100);
+     if (filler.toLowerCase() === "other") {
+        openFillerModal(name);
         return;
       }
-  
+ 
       // Normal filler
       handleClick(name, filler, 1, e.target);
     });
@@ -290,3 +270,41 @@ copyBtn.addEventListener("click", () => {
   copyBtn.textContent = "Copied!";
   setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
 });
+
+const addFillerModal = document.getElementById("addFillerModal");
+const newFillerInput = document.getElementById("newFillerInput");
+const saveFillerBtn   = document.getElementById("saveFiller");
+const cancelFillerBtn = document.getElementById("cancelFiller");
+
+let pendingOtherClick = null;
+
+function openFillerModal(name) {
+  pendingOtherClick = name;
+  newFillerInput.value = "";
+  addFillerModal.classList.remove("hidden");
+  newFillerInput.focus();
+}
+
+function closeFillerModal() {
+  addFillerModal.classList.add("hidden");
+  pendingOtherClick = null;
+}
+
+// Handle save
+saveFillerBtn.addEventListener("click", () => {
+  const clean = newFillerInput.value.trim();
+  if (!clean) return;
+  if (!fillers.includes(clean)) {
+    const otherIndex = fillers.findIndex(f => f.toLowerCase() === "other");
+    const insertAt = otherIndex >= 0 ? otherIndex : fillers.length;
+    fillers.splice(insertAt, 0, clean);
+    Object.values(counts).forEach(s => (s.details[clean] = 0));
+    saveData();
+    showToast(`✨ Added new filler: “${clean}” ✨`);
+  }
+  if (pendingOtherClick) handleClick(pendingOtherClick, clean, 1);
+  closeFillerModal();
+  buildTable();
+});
+
+cancelFillerBtn.addEventListener("click", closeFillerModal);
