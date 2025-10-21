@@ -212,17 +212,7 @@ function buildTable() {
 }
 
 // === Add Speaker ===
-addSpeakerBtn.addEventListener("click", () => {
-  const name = prompt("Enter speaker name:");
-  if (!name) return;
-  const clean = name.trim();
-  if (!clean || counts[clean]) return;
-
-  counts[clean] = { total: 0, details: {} };
-  fillers.forEach(f => (counts[clean].details[f] = 0));
-  saveData();
-  buildTable();
-});
+addSpeakerBtn.addEventListener("click", openSpeakerModal);
 
 // === Reset All ===
 resetAllBtn.addEventListener("click", () => {
@@ -319,3 +309,33 @@ saveFillerBtn.addEventListener("click", () => {
 });
 
 cancelFillerBtn.addEventListener("click", closeFillerModal);
+// === Add Speaker Modal ===
+const addSpeakerModal = document.getElementById("addSpeakerModal");
+const newSpeakerInput = document.getElementById("newSpeakerInput");
+const saveSpeakerBtn  = document.getElementById("saveSpeaker");
+const cancelSpeakerBtn = document.getElementById("cancelSpeaker");
+
+function openSpeakerModal() {
+  newSpeakerInput.value = "";
+  addSpeakerModal.classList.add("show");
+  newSpeakerInput.focus({ preventScroll: true });
+}
+
+function closeSpeakerModal() {
+  addSpeakerModal.classList.remove("show");
+}
+
+// Save speaker
+saveSpeakerBtn.addEventListener("click", () => {
+  const clean = newSpeakerInput.value.trim();
+  if (!clean || counts[clean]) return;
+  counts[clean] = { total: 0, details: {} };
+  fillers.forEach(f => (counts[clean].details[f] = 0));
+  saveData();
+  showToast(`👤 Added new speaker: “${clean}”`);
+  closeSpeakerModal();
+  buildTable();
+});
+
+cancelSpeakerBtn.addEventListener("click", closeSpeakerModal);
+
