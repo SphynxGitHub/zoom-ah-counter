@@ -5,6 +5,7 @@ const defaultNames = ["Steve", "Jarrod", "Arielle", "Dave", "Khan", "Sandy", "Le
 
 let counts = {};
 let clickSound = new Audio("sounds/pop.wav");
+clickSound.volume = 1.0; // 1.0 is max; lower if too loud later
 clickSound.preload = "auto";
 
 window.addEventListener("DOMContentLoaded", () => {
