@@ -37,8 +37,11 @@ function updateHeaderTotals() {
 
 // === Handle clicks for each filler button ===
 function handleClick(name, filler, delta = 1, buttonEl) {
-  clickSound.currentTime = 0;
-  clickSound.play().catch(() => {});
+  // Only play sound when adding
+  if (delta > 0) {
+    clickSound.currentTime = 0;
+    clickSound.play().catch(() => {});
+  }
 
   const current = counts[name].details[filler] || 0;
   const newCount = Math.max(0, current + delta);
