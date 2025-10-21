@@ -105,12 +105,12 @@ function buildTable() {
     <th rowspan="2">Total</th>
     ${fillers
       .map((f, i) => {
-        const removable = f !== "Other";
-        return `<th>${f}${removable ? ` <span class="remove-filler" data-index="${i}" title="Remove '${f}'">×</span>` : ""}</th>`;
+        const isOther = f.toLowerCase() === "other";
+        return `<th>${f}${!isOther ? ` <span class="remove-filler" data-index="${i}" title="Remove '${f}'">×</span>` : ""}</th>`;
       })
       .join("")}
   `;
-  table.appendChild(headerRow1); // ✅ You were missing this line
+  table.appendChild(headerRow1);
 
   // === Header Row 2: totals ===
   const headerRow2 = document.createElement("tr");
@@ -226,6 +226,7 @@ showSummaryBtn.addEventListener("click", () => {
     }
   }
 
+  // Overall totals
   html += `<hr><div><strong>Overall Totals</strong></div>`;
   fillers.forEach(f => {
     const total = Object.values(counts).reduce((sum, s) => sum + (s.details[f] || 0), 0);
@@ -233,13 +234,13 @@ showSummaryBtn.addEventListener("click", () => {
   });
 
   summaryList.innerHTML = html || "<em>No counts yet.</em>";
-  modal.style.display = "flex";
+  modal.classList.add("show");
   showSummaryBtn.style.display = "none";
   hideSummaryBtn.style.display = "inline-block";
 });
 
 function hideModal() {
-  modal.style.display = "none";
+  modal.classList.remove("show");
   hideSummaryBtn.style.display = "none";
   showSummaryBtn.style.display = "inline-block";
 }
