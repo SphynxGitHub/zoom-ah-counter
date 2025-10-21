@@ -139,8 +139,39 @@ function buildTable() {
   document.querySelectorAll(".filler-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       const { name, filler } = e.target.dataset;
+  
+      // Special case: "Other" opens prompt
+      if (filler.toLowerCase() === "other") {
+        const newFiller = prompt("Enter the filler word used:");
+        if (!newFiller) return;
+  
+        const clean = newFiller.trim();
+        if (!clean) return;
+  
+        // Only add if not already a filler
+        if (!fillers.includes(clean)) {
+          // Insert before "Other"
+          const otherIndex = fillers.findIndex(f => f.toLowerCase() === "other");
+          const insertAt = otherIndex >= 0 ? otherIndex : fillers.length;
+          fillers.splice(insertAt, 0, clean);
+  
+          // Add to all speakers with count = 0
+          Object.values(counts).forEach(s => (s.details[clean] = 0));
+  
+          // ✅ Persist new filler in localStorage
+          saveData();
+        }
+  
+        // Increment for current speaker
+        handleClick(name, clean, 1);
+        buildTable();
+        return;
+      }
+  
+      // Normal filler
       handleClick(name, filler, 1, e.target);
     });
+  
     btn.addEventListener("contextmenu", e => {
       e.preventDefault();
       const { name, filler } = e.target.dataset;
