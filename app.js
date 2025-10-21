@@ -1,5 +1,7 @@
 // === Global setup ===
 let fillers = JSON.parse(localStorage.getItem("fillers")) || ["Ah", "Um", "You know", "So", "Like", "Other"];
+// Ensure "Other" always exists and is last
+if (!fillers.includes("Other")) fillers.push("Other");
 let defaultNames = JSON.parse(localStorage.getItem("speakers")) || [
   "Steve", "Jarrod", "Arielle", "Dave", "Khan", "Sandy", "Len", "Anthony", "Renson"
 ];
