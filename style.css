@@ -57,7 +57,11 @@
 .filler-btn:hover {
   background: #dbeafe;
 }
-
+.total {
+  font-weight: 700;
+  color: #111;
+  background: #e0f2fe;
+}
 .modal {
   position: fixed;
   top: 0;
@@ -142,36 +146,48 @@
 .filler-btn:active {
   transform: scale(0.95);
 }
+.tip-header {
+  background: #e0f2fe;
+  border: 1px solid #3b82f6;
+  color: #1e3a8a;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.remove-sample {
+  color: #e11d48;
+  font-weight: bold;
+  font-size: 14px;
+}
+
 .name {
   position: relative;
   text-align: left;
   font-weight: 600;
-  padding-left: 10px;
+  padding: 6px 12px;
+}
+
+.speaker-text {
+  margin-right: 10px;
 }
 
 .remove-btn {
   color: #e11d48;
   font-weight: bold;
-  margin-left: 6px;
+  margin-left: 10px;
   cursor: pointer;
   font-size: 16px;
   line-height: 1;
 }
+
 .remove-btn:hover {
   color: #991b1b;
 }
-.total {
-  font-weight: 700;
-  color: #111;
-  background: #e0f2fe;
-}
-.tip {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #555;
-  text-align: center;
-  font-style: italic;
-}
+
 #hideSummary {
   background: #9ca3af;
 }
@@ -182,4 +198,28 @@
 /* compact spacing for sidebar use */
 @media (max-width: 800px) {
   .counter-table th, .counter-table td { padding: 4px 6px; font-size: 12px; }
+}
+/* give more breathing room between name and ❌ */
+.speaker-text {
+  margin-right: 16px; /* wider gap for readability */
+}
+
+.name .remove-btn {
+  position: static;   /* inline instead of absolute for tables */
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* keep header sticky for long lists */
+.counter-table th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* ensure modal text readable on small screens */
+.modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
 }
