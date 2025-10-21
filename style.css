@@ -142,15 +142,24 @@
 .filler-btn:active {
   transform: scale(0.95);
 }
+.name {
+  position: relative;
+  text-align: left;
+  font-weight: 600;
+  padding-left: 10px;
+}
 
 .remove-btn {
   color: #e11d48;
   font-weight: bold;
-  font-size: 16px;
+  margin-left: 6px;
   cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
 }
-.remove-btn:hover { color: #991b1b; }
-
+.remove-btn:hover {
+  color: #991b1b;
+}
 .total {
   font-weight: 700;
   color: #111;
