@@ -36,7 +36,7 @@ window.addEventListener("DOMContentLoaded", () => {
   buildTable();
 });
 
-// === Save data to localStorage ===
+// === Save data ===
 function saveData() {
   localStorage.setItem("fillers", JSON.stringify(fillers));
   localStorage.setItem("speakers", JSON.stringify(Object.keys(counts)));
@@ -54,9 +54,8 @@ function updateHeaderTotals() {
   });
 }
 
-// === Handle clicks for each filler button ===
+// === Handle clicks ===
 function handleClick(name, filler, delta = 1, buttonEl) {
-  // Only play sound when adding
   if (delta > 0) {
     clickSound.currentTime = 0;
     clickSound.play().catch(() => {});
@@ -67,12 +66,10 @@ function handleClick(name, filler, delta = 1, buttonEl) {
   counts[name].details[filler] = newCount;
   counts[name].total = Object.values(counts[name].details).reduce((a, b) => a + b, 0);
 
-  // Update UI live
   if (buttonEl) buttonEl.textContent = newCount;
   const totalCell = document.getElementById(`total-${name}`);
   if (totalCell) totalCell.textContent = counts[name].total;
   updateHeaderTotals();
-
   saveData();
 }
 
@@ -81,24 +78,10 @@ function buildTable() {
   const container = document.getElementById("participantContainer");
   container.innerHTML = "";
 
-  // === Sub-header always under the page title ===
-  let usage = document.getElementById("usageHeader");
-  if (!usage) {
-    const title = document.querySelector("h1");
-    usage = document.createElement("div");
-    usage.id = "usageHeader";
-    usage.className = "subheader";
-    title.insertAdjacentElement("afterend", usage);
-  }
-  usage.innerHTML = `
-    💡 <strong>How to Use:</strong> Left-click adds +1, right-click subtracts −1. 
-    Click <span class="remove-sample">×</span> to remove a speaker or filler word.
-  `;
-
   const table = document.createElement("table");
   table.className = "counter-table";
 
-  // === Header Row 1: filler names + remove icons (except “Other”) ===
+  // === Header Row 1 ===
   const headerRow1 = document.createElement("tr");
   headerRow1.innerHTML = `
     <th rowspan="2">Speaker</th>
@@ -112,7 +95,7 @@ function buildTable() {
   `;
   table.appendChild(headerRow1);
 
-  // === Header Row 2: totals ===
+  // === Header Row 2 ===
   const headerRow2 = document.createElement("tr");
   headerRow2.innerHTML = fillers
     .map(
@@ -163,7 +146,6 @@ function buildTable() {
     });
   });
 
-  // Remove speaker
   document.querySelectorAll(".remove-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       const name = e.target.dataset.name;
@@ -173,12 +155,11 @@ function buildTable() {
     });
   });
 
-  // Remove filler (except "Other")
   document.querySelectorAll(".remove-filler").forEach(icon => {
     icon.addEventListener("click", e => {
       const index = parseInt(e.target.dataset.index);
       const fillerToRemove = fillers[index];
-      if (fillerToRemove === "Other") return; // ❌ skip removal
+      if (fillerToRemove.toLowerCase() === "other") return;
       if (confirm(`Remove filler '${fillerToRemove}' from all speakers?`)) {
         fillers.splice(index, 1);
         Object.values(counts).forEach(speaker => {
@@ -216,7 +197,7 @@ resetAllBtn.addEventListener("click", () => {
   buildTable();
 });
 
-// === Summary Modal Logic ===
+// === Summary Modal ===
 showSummaryBtn.addEventListener("click", () => {
   let html = "";
   for (const [name, data] of Object.entries(counts)) {
@@ -226,7 +207,6 @@ showSummaryBtn.addEventListener("click", () => {
     }
   }
 
-  // Overall totals
   html += `<hr><div><strong>Overall Totals</strong></div>`;
   fillers.forEach(f => {
     const total = Object.values(counts).reduce((sum, s) => sum + (s.details[f] || 0), 0);
