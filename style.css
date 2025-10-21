@@ -109,10 +109,14 @@
   padding: 3px 6px;
   min-width: 40px;
   cursor: pointer;
+  user-select: none;
 }
 .filler-btn:hover {
   background: #dbeafe;
   border-color: #3b82f6;
+}
+.filler-btn:active {
+  transform: scale(0.95);
 }
 
 .remove-btn {
@@ -128,6 +132,14 @@
   color: #111;
   background: #e0f2fe;
 }
+.tip {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #555;
+  text-align: center;
+  font-style: italic;
+}
+
 
 /* compact spacing for sidebar use */
 @media (max-width: 800px) {
