@@ -278,15 +278,26 @@ const cancelFillerBtn = document.getElementById("cancelFiller");
 
 let pendingOtherClick = null;
 
+// Ensure modal renders at top layer inside Zoom iframe
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("addFillerModal");
+  if (window.zoomApp) {
+    modal.style.position = "absolute";
+    modal.style.zIndex = "2147483647"; // max z-index possible
+  }
+});
+
 function openFillerModal(name) {
   pendingOtherClick = name;
   newFillerInput.value = "";
-  addFillerModal.classList.remove("hidden");
-  newFillerInput.focus();
+  const modal = document.getElementById("addFillerModal");
+  modal.classList.add("show");
+  newFillerInput.focus({ preventScroll: true });
 }
 
 function closeFillerModal() {
-  addFillerModal.classList.add("hidden");
+  const modal = document.getElementById("addFillerModal");
+  modal.classList.remove("show");
   pendingOtherClick = null;
 }
 
