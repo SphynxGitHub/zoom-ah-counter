@@ -200,14 +200,14 @@
   vertical-align: middle;
 }
 
-.tip-header {
+.subheader {
   background: #e0f2fe;
   border: 1px solid #3b82f6;
   color: #1e3a8a;
   font-weight: 500;
   padding: 10px 16px;
   border-radius: 10px;
-  margin: 10px auto 20px;
+  margin: 10px auto 16px;
   max-width: 900px;
   text-align: center;
   font-size: 14px;
