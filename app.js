@@ -90,7 +90,6 @@ function handleClick(name, filler, delta = 1, buttonEl) {
     clickSound.currentTime = 0;
     clickSound.play().catch(() => {});
   }
-  suppressNextSound = false; // reset after each call
 
   const current = counts[name].details[filler] || 0;
   const newCount = Math.max(0, current + delta);
@@ -100,8 +99,12 @@ function handleClick(name, filler, delta = 1, buttonEl) {
   if (buttonEl) buttonEl.textContent = newCount;
   const totalCell = document.getElementById(`total-${name}`);
   if (totalCell) totalCell.textContent = counts[name].total;
+
   updateHeaderTotals();
   saveData();
+
+  // reset flag after all logic
+  suppressNextSound = false;
 }
 
 // === Build full table ===
@@ -342,9 +345,14 @@ saveFillerBtn.addEventListener("click", () => {
     showToast(`✨ Added new filler: “${clean}” ✨`);
   }
   if (pendingOtherClick) {
-    suppressNextSound = true; // ✅ prevent double sound
+    // ✅ Add column first (and ensure it's persisted)
+    suppressNextSound = true; // prevent pop again
     handleClick(pendingOtherClick, clean, 1);
   }
+  
+  saveData();
+  closeFillerModal();
+  buildTable();
 });
 
 cancelFillerBtn.addEventListener("click", closeFillerModal);
