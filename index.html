@@ -8,35 +8,35 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>Toastmasters Ah-Counter 🎙️</h1>
+  <h1>Toastmasters Ah-Counter 🎙️</h1>
 
-    <div id="participantContainer" class="grid">
-      <div class="loading">Add participants to begin</div>
-    </div>
-
-    <div class="controls">
-      <button id="addCustom">+ Add Speaker</button>
-      <button id="showSummary">Show Summary</button>
-      <button id="resetAll">Reset All</button>
-    </div>
-
-    <div class="footer">
-      🔊 Make sure your computer sound is on
-    </div>
+  <!-- subheader appears here dynamically -->
+  <div id="participantContainer" class="grid">
+    <div class="loading">Add participants to begin</div>
   </div>
 
-  <!-- Summary modal -->
-  <div id="summaryModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Summary of Counts</h2>
-      <div id="summaryList"></div>
-      <div class="modal-buttons">
-        <button id="copySummary">Copy</button>
-        <button id="closeSummary">Close</button>
-      </div>
-    </div>
+  <div class="controls">
+    <button id="addSpeaker">+ Add Speaker</button>
+    <button id="showSummary">Show Summary</button>
+    <button id="resetAll">Reset All</button>
   </div>
 
+  <div class="footer">
+    🔊 Make sure your computer sound is on
+  </div>
+</div>
+
+<!-- Summary modal -->
+<div id="summaryModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Summary of Counts</h2>
+    <div id="summaryList"></div>
+    <div class="modal-buttons">
+      <button id="copySummary">Copy</button>
+      <button id="closeSummary">Close</button>
+    </div>
+  </div>
+</div>
   <script src="app.js"></script>
 </body>
 </html>
