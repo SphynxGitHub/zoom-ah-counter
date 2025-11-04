@@ -5,6 +5,35 @@
   <title>Toastmasters Ah-Counter 🎙️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
+
+  <!-- ✅ Zoom Apps SDK must load BEFORE app.js -->
+  <script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
+
+  <!-- ✅ OAuth must be initialized EARLY (head section) -->
+  <script>
+    (async () => {
+      try {
+        await zoomSdk.config({
+          capabilities: [
+            'authorize',
+            'getUserContext',
+            'getMeetingContext',
+            'getMeetingParticipants'
+          ]
+        });
+
+        const { code, state } = await zoomSdk.authorize({
+          redirectUri: 'https://sphynxgithub.github.io/zoom-ah-counter/oauth-callback.html',
+          state: 'ah-counter'
+        });
+
+        // Optional: handle code/state here if using a backend
+      } catch (e) {
+        console.warn('Zoom Auth not completed:', e);
+      }
+    })();
+  </script>
+
 </head>
 <body>
   <div class="wrap">
@@ -41,46 +70,45 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Add Filler Modal -->
   <div id="addFillerModal" class="modal hidden">
     <div class="modal-content">
       <h2>Add a new filler word</h2>
-      <input id="newFillerInput" type="text" placeholder="Type filler word..." style="width:100%;padding:8px;margin-top:8px;border:1px solid #ccc;border-radius:6px;">
-      <div class="modal-buttons" style="margin-top:12px;text-align:center;">
+      <input id="newFillerInput" type="text" placeholder="Type filler word...">
+      <div class="modal-buttons">
         <button id="saveFiller">Add</button>
         <button id="cancelFiller">Cancel</button>
       </div>
     </div>
   </div>
-  
+
   <!-- Add Speaker Modal -->
   <div id="addSpeakerModal" class="modal hidden">
     <div class="modal-content">
       <h2>Add a new speaker</h2>
-      <input id="newSpeakerInput" type="text"
-             placeholder="Type speaker name..."
-             style="width:100%;padding:8px;margin-top:8px;
-                    border:1px solid #ccc;border-radius:6px;">
-      <div class="modal-buttons" style="margin-top:12px;text-align:center;">
+      <input id="newSpeakerInput" type="text" placeholder="Type speaker name...">
+      <div class="modal-buttons">
         <button id="saveSpeaker">Add</button>
         <button id="cancelSpeaker">Cancel</button>
       </div>
     </div>
   </div>
-  
+
   <!-- Confirm Remove Modal -->
   <div id="confirmModal" class="modal hidden">
     <div class="modal-content">
       <h2>Remove filler?</h2>
-      <div id="confirmText" style="margin:10px 0 16px;"></div>
-      <div class="modal-buttons" style="text-align:center;">
+      <div id="confirmText"></div>
+      <div class="modal-buttons">
         <button id="confirmYes">Remove</button>
         <button id="confirmNo">Cancel</button>
       </div>
     </div>
   </div>
 
+  <!-- ✅ Load app logic AFTER Zoom SDK + OAuth -->
   <script src="app.js"></script>
+
 </body>
 </html>
