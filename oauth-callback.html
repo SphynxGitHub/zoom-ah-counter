@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zoom OAuth Callback</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>Returning to the app…</h2>
+  <p>Please wait while we send you back.</p>
+
+  <script>
+    (async () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const code  = params.get("code");
+        const state = params.get("state");
+
+        // ✅ Required: Zoom must see this config
+        await zoomSdk.config({
+          capabilities: ['authorize']
+        });
+
+        // ✅ Jump straight back to your App main page inside Zoom
+        await zoomSdk.openUrl({
+          url: "https://sphynxgithub.github.io/zoom-ah-counter/",
+          // open in the same Zoom Apps window
+          onSuccess: () => console.log("Redirecting back…")
+        });
+
+      } catch (err) {
+        console.error("OAuth return failed:", err);
+      }
+    })();
+  </script>
+
+</body>
+</html>
