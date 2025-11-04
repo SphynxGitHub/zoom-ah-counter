@@ -42,56 +42,8 @@ button {
   If nothing happens, manually open Zoom → Apps → Toastmasters Ah-Counter
 </div>
 
-<script>
-const DEEPLINK = 
-  "https://marketplace.zoom.us/zoomapp/vt8JWGG5SBmzU2gidUgi5A/context/panel/target/launch/deeplink";
-
-async function openViaSDK() {
-  try {
-    await zoomSdk.config({ capabilities: ["openUrl"] });
-    await zoomSdk.openUrl({
-      url: DEEPLINK,
-      context: "inClient"
-    });
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function openViaDeepLink() {
-  window.location.href = DEEPLINK;
-}
-
-async function init() {
-  let insideZoom = false;
-
-  try {
-    await zoomSdk.ready(); // resolves only inside Zoom
-    insideZoom = true;
-  } catch {}
-
-  if (insideZoom) {
-    // ✅ Inside Zoom: use SDK
-    await openViaSDK();
-  } else {
-    // ✅ Browser: auto-launch Zoom desktop
-    setTimeout(() => openViaDeepLink(), 400);
-
-    // Show fallback instructions after 3 seconds
-    setTimeout(() => {
-      document.getElementById("fallback").style.display = "block";
-    }, 3000);
-  }
-}
-
-document.getElementById("openButton")
-  .addEventListener("click", () => {
-    openViaDeepLink();
-  });
-
-init();
-</script>
+<script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
+<script src="/zoom-ah-counter/oauth-callback.js"></script>
 
 </body>
 </html>
