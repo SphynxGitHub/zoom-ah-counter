@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Returning to Zoom...</title>
+<title>Returning to Zoom…</title>
 <script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
 <style>
 body {
@@ -10,27 +10,46 @@ body {
   text-align: center;
   margin-top: 2.5rem;
 }
+#openInZoom {
+  background:#0E71EB;
+  color:white;
+  padding:10px 18px;
+  border-radius:8px;
+  font-size:15px;
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+  margin-top:15px;
+}
 </style>
 </head>
 <body>
   <h2>Returning to Zoom…</h2>
   <p>Please wait while we send you back.</p>
+  
+  <!-- ✅ Manual fallback -->
+  <button id="openInZoom">🚀 Reopen in Zoom</button>
 
 <script>
 (async () => {
-  try {
-    await zoomSdk.config({
-      capabilities: ["openUrl"]
-    });
+  const deepLink = "https://marketplace.zoom.us/zoomapp/TSGu3pxJTCyhUy0VtGbqlA/context/panel/target/launch/deeplink";
 
-    // ✅ Relaunch the Zoom App inside Zoom Client
-    zoomSdk.openUrl({
-      url: "https://marketplace.zoom.us/zoomapp/vt8JWGG5SBmzU2gidUgi5A/context/meeting/target/launch/deeplink",
-      context: "inClient"
-    });
-  } catch (e) {
-    console.error("ZoomSDK redirect failed", e);
+  try {
+    await zoomSdk.config({ capabilities: ["openUrl"] });
+
+    setTimeout(() => {
+      zoomSdk.openUrl({ url: deepLink, context: "inClient" })
+        .catch(err => console.warn("Auto redirect failed", err));
+    }, 800);
+
+  } catch(err) {
+    console.error("Zoom SDK load failed:", err);
   }
+
+  // Button fallback
+  document.getElementById("openInZoom").addEventListener("click", () => {
+    window.location.href = deepLink;
+  });
 })();
 </script>
 
