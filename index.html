@@ -6,36 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 
-  <!-- ✅ Zoom Apps SDK must load BEFORE app.js -->
+  <!-- Zoom JS -->
   <script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
-
-  <!-- ✅ OAuth must be initialized EARLY (head section) -->
-  <script>
-    (async () => {
-      try {
-        await zoomSdk.config({
-          capabilities: [
-            'authorize',
-            'getUserContext',
-            'getMeetingContext',
-            'getMeetingParticipants'
-          ]
-        });
-
-        const { code, state } = await zoomSdk.authorize({
-          redirectUri: 'https://sphynxgithub.github.io/zoom-ah-counter/oauth-callback.html',
-          state: 'ah-counter'
-        });
-
-        // Optional: handle code/state here if using a backend
-      } catch (e) {
-        console.warn('Zoom Auth not completed:', e);
-      }
-    })();
-  </script>
-
 </head>
 <body>
+
+  <!-- ✅ Launch button for Zoom Client -->
+  <button id="openInZoom" class="open-zoom-btn">
+    🚀 Open in Zoom
+  </button>
+
   <div class="wrap">
     <h1>Toastmasters Ah-Counter 🎙️</h1>
 
@@ -107,8 +87,44 @@
     </div>
   </div>
 
-  <!-- ✅ Load app logic AFTER Zoom SDK + OAuth -->
-  <script src="app.js"></script>
+ <script src="app.js"></script>
+
+  <!-- ✅ Zoom Launch Deep Link -->
+  <script>
+    const deepLink = "https://marketplace.zoom.us/zoomapp/TSGu3pxJTCyhUy0VtGbqlA/context/panel/target/launch/deeplink";
+
+    document.getElementById("openInZoom").addEventListener("click", () => {
+      
+      if (window.navigator.userAgent.includes("ZoomApps")) {
+        zoomSdk.openUrl({
+          url: deepLink,
+          context: "inClient"
+        }).catch(err => console.error("Zoom SDK open failed:", err));
+        return;
+      }
+
+      window.location.href = deepLink;
+
+      setTimeout(() => {
+        if (!document.getElementById("zoomFailMessage")) {
+          const msg = document.createElement("p");
+          msg.id = "zoomFailMessage";
+          msg.innerHTML = `
+            If Zoom did not open automatically,
+            <a href="zoommtg://zoom.us" style="color:#0E71EB;font-weight:600">
+              click here to open Zoom
+            </a>.
+          `;
+          document.body.appendChild(msg);
+        }
+      }, 3000);
+    });
+
+    // Hide button when already running inside Zoom
+    if (window.navigator.userAgent.includes("ZoomApps")) {
+      document.getElementById("openInZoom").style.display = "none";
+    }
+  </script>
 
 </body>
 </html>
