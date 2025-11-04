@@ -2,60 +2,95 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<meta name="zoom-domain-verification" content="ZOOM_verify_8e7da749a3f44cfcaf76952eb3e792f9">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Returning to Zoom…</title>
+<meta name="zoom-domain-verification" content="ZOOM_verify_8e7da749a3f44cfcaf76952eb3e792f9">
+
 <style>
 body {
   font-family: sans-serif;
   text-align: center;
-  margin-top: 2.5rem;
+  margin: 2.5rem;
 }
-#reopenBtn {
+button {
   background:#0E71EB;
   color:white;
-  padding:10px 18px;
-  border-radius:8px;
-  font-size:15px;
-  font-weight:600;
+  padding:12px 20px;
   border:none;
+  border-radius:8px;
+  font-size:16px;
+  font-weight:600;
   cursor:pointer;
-  margin-top:15px;
+  margin-top:16px;
+}
+#fallback {
+  margin-top:20px;
+  font-size:14px;
+  display:none;
 }
 </style>
-</head>
-<body>
-
-<h2>Authorization Complete ✅</h2>
-<p>You can now open the app inside Zoom.</p>
-
-<button id="reopenBtn">
-  Open in Zoom
-</button>
-
-<p style="margin-top:10px;font-size:14px;">
-If nothing happens, go to Zoom → Apps → Toastmasters Ah-Counter
-</p>
 
 <script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
-<script>
-async function openInZoom() {
-  try {
-    await zoomSdk.config({
-      capabilities: ["openUrl"]
-    });
+</head>
 
+<body>
+<h2>Authorization Complete ✅</h2>
+<p>Reopening your Zoom app...</p>
+
+<button id="openButton">Open in Zoom</button>
+<div id="fallback">
+  If nothing happens, manually open Zoom → Apps → Toastmasters Ah-Counter
+</div>
+
+<script>
+const DEEPLINK = 
+  "https://marketplace.zoom.us/zoomapp/vt8JWGG5SBmzU2gidUgi5A/context/panel/target/launch/deeplink";
+
+async function openViaSDK() {
+  try {
+    await zoomSdk.config({ capabilities: ["openUrl"] });
     await zoomSdk.openUrl({
-      url: "https://marketplace.zoom.us/zoomapp/vt8JWGG5SBmzU2gidUgi5A/context/panel/target/launch/deeplink",
+      url: DEEPLINK,
       context: "inClient"
     });
+    return true;
   } catch (e) {
-    console.error("openUrl failed:", e);
-    alert("Please open this inside Zoom: Click Apps > Toastmasters Ah-Counter");
+    return false;
   }
 }
 
-document.getElementById("reopenBtn")
-  .addEventListener("click", openInZoom);
+function openViaDeepLink() {
+  window.location.href = DEEPLINK;
+}
+
+async function init() {
+  let insideZoom = false;
+
+  try {
+    await zoomSdk.ready(); // resolves only inside Zoom
+    insideZoom = true;
+  } catch {}
+
+  if (insideZoom) {
+    // ✅ Inside Zoom: use SDK
+    await openViaSDK();
+  } else {
+    // ✅ Browser: auto-launch Zoom desktop
+    setTimeout(() => openViaDeepLink(), 400);
+
+    // Show fallback instructions after 3 seconds
+    setTimeout(() => {
+      document.getElementById("fallback").style.display = "block";
+    }, 3000);
+  }
+}
+
+document.getElementById("openButton")
+  .addEventListener("click", () => {
+    openViaDeepLink();
+  });
+
+init();
 </script>
 
 </body>
