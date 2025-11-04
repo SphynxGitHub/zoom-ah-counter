@@ -32,27 +32,28 @@ body {
   <!-- ✅ Manual fallback -->
   <button id="openInZoom">🚀 Reopen in Zoom</button>
 
+<script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
 <script>
-(async () => {
-  const deepLink = "https://marketplace.zoom.us/zoomapp/vt8JWGG5SBmzU2gidUgi5A/context/panel/target/launch/deeplink";
-
+async function openInZoom() {
   try {
-    await zoomSdk.config({ capabilities: ["openUrl"] });
+    await zoomSdk.config({
+      capabilities: ["openUrl"]
+    });
 
-    setTimeout(() => {
-      zoomSdk.openUrl({ url: deepLink, context: "inClient" })
-        .catch(err => console.warn("Auto redirect failed", err));
-    }, 800);
-
-  } catch(err) {
-    console.error("Zoom SDK load failed:", err);
+    await zoomSdk.openUrl({
+      url: "https://marketplace.zoom.us/zoomapp/vt8JWGG5SBmzU2gidUgi5A/context/panel/target/launch/deeplink",
+      context: "inClient"
+    });
+  } catch (e) {
+    console.error("openUrl failed:", e);
+    alert("Please open this inside Zoom: Click Apps > Toastmasters Ah-Counter");
   }
+}
 
-  // Button fallback
-  document.getElementById("openInZoom").addEventListener("click", () => {
-    window.location.href = deepLink;
-  });
-})();
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("reopenBtn");
+  btn.addEventListener("click", openInZoom);
+});
 </script>
 
 </body>
