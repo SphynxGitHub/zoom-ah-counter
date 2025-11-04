@@ -4,6 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Returning to Zoom…</title>
+
+<!-- ✅ Required by Zoom Marketplace -->
 <meta name="zoom-domain-verification" content="ZOOM_verify_8e7da749a3f44cfcaf76952eb3e792f9">
 
 <style>
@@ -30,6 +32,7 @@ button {
 }
 </style>
 
+<!-- ✅ ONLY ONE Zoom SDK load -->
 <script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
 </head>
 
@@ -38,11 +41,12 @@ button {
 <p>Reopening your Zoom app...</p>
 
 <button id="openButton">Open in Zoom</button>
+
 <div id="fallback">
-  If nothing happens, manually open Zoom → Apps → Toastmasters Ah-Counter
+  If nothing happens, manually open: Zoom → Apps → Toastmasters Ah-Counter
 </div>
 
-<script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
+<!-- ✅ External JS file (no inline JS allowed under CSP) -->
 <script src="/zoom-ah-counter/oauth-callback.js"></script>
 
 </body>
