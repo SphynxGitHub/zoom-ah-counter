@@ -1,48 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Zoom OAuth Callback</title>
+  <meta charset="UTF-8">
+  <title>Returning to Toastmasters Ah-Counter…</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
-
   <style>
     body {
-      font-family: sans-serif;
-      padding: 20px;
-      text-align: center;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family: Arial, sans-serif;
+      height:100vh;
+      text-align:center;
+      background:#fafafa;
+      padding:20px;
     }
+    button {
+      padding:10px 18px;
+      background:#0E71EB;
+      border:none;
+      border-radius:6px;
+      color:white;
+      font-weight:600;
+      cursor:pointer;
+      margin-top:14px;
+      font-size:16px;
+    }
+    button:hover { opacity:0.9; }
   </style>
 </head>
 <body>
-  <h2>Returning to the app…</h2>
-  <p>Please wait while we send you back.</p>
+  <div>
+    <h2>You’re all set!</h2>
+    <p>If you are not automatically redirected, click below:</p>
+    <button id="openZoom">Open in Zoom</button>
+  </div>
 
+  <script src="https://source.zoom.us/zoomapps/1.1.0/lib.js"></script>
   <script>
-    (async () => {
+    const homeUrl = "https://sphynxgithub.github.io/zoom-ah-counter/";
+
+    async function tryAutoReturn() {
       try {
-        const params = new URLSearchParams(window.location.search);
-        const code  = params.get("code");
-        const state = params.get("state");
+        await zoomSdk.config({ capabilities: ['openUrl'] });
 
-        // ✅ Required: Zoom must see this config
-        await zoomSdk.config({
-          capabilities: ['authorize']
-        });
-
-        // ✅ Jump straight back to your App main page inside Zoom
+        // ✅ Automatically return inside Zoom
         await zoomSdk.openUrl({
-          url: "https://sphynxgithub.github.io/zoom-ah-counter/",
-          // open in the same Zoom Apps window
-          onSuccess: () => console.log("Redirecting back…")
+          url: homeUrl,
+          sameContext: true
         });
-
-      } catch (err) {
-        console.error("OAuth return failed:", err);
+      } catch (e) {
+        console.log("Not inside Zoom — fallback to manual button", e);
       }
-    })();
-  </script>
+    }
 
+    document.getElementById("openZoom").addEventListener("click", () => {
+      // ✅ Open in Zoom client (desktop deep link)
+      window.location.href = "zoomus://zoom.us/app";
+      setTimeout(() => {
+        // If desktop doesn't handle deep link, fallback to web app
+        window.location.href = homeUrl;
+      }, 1200);
+    });
+
+    tryAutoReturn();
+  </script>
 </body>
 </html>
